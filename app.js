@@ -1,24 +1,25 @@
 const express = require("express");
 const cors = require("cors");
-const { BadRequestError, errorHandler } = require("./app/api-error");
+const setupContactRouter = require("./app/routes/contact.routes");
+const { BadRequestError, errorHandler } = require("./app/errors");
 
 const app = express();
-const contactsRouter = require("./app/routes/contact.route");
 
 app.use(cors());
 app.use(express.json());
-app.use("/api/contacts", contactsRouter);
 
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to contact book application." });
+  res.json({ message: "Welcom to contact book application" });
 });
+
+setupContactRouter(app);
 
 app.use((req, res, next) => {
   next(new BadRequestError(404, "Resource not found"));
 });
 
-app.use((err, req, res, next) => {
-  errorHandler.handleError(err, res);
+app.use((error, req, res, next) => {
+  errorHandler.handleError(error, res);
 });
 
 module.exports = app;
